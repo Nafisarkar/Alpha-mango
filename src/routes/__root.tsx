@@ -4,6 +4,7 @@ import AppSidebar from "@/components/appsidebar";
 import StatusBar from "@/components/statusbar";
 import { useAtomValue, useSetAtom } from "jotai";
 import {
+  databaseCollectionsAtom,
   databasesAtom,
   dbConnectionStatusAtom,
   dbConnectionStringAtom,
@@ -22,6 +23,7 @@ function RootComponent() {
   const setDbLoading = useSetAtom(dbLoadingAtom);
   const setDbError = useSetAtom(dbErrorAtom);
   const setDatabases = useSetAtom(databasesAtom);
+  const setDatabaseCollections = useSetAtom(databaseCollectionsAtom);
   const connectionVersionRef = useRef(0);
 
   async function handleConnect(connStr: string) {
@@ -30,6 +32,7 @@ function RootComponent() {
       setDbConnectionStatus(false);
       setDbError(null);
       setDatabases([]);
+      setDatabaseCollections({});
       return;
     }
 
@@ -54,6 +57,7 @@ function RootComponent() {
         setDbConnectionStatus(false);
         setDbError(error instanceof Error ? error.message : String(error));
         setDatabases([]);
+        setDatabaseCollections({});
       }
     } finally {
       if (currentVersion === connectionVersionRef.current) {
@@ -66,12 +70,38 @@ function RootComponent() {
     try {
       setDbLoading(true);
       const dbs = await invoke<string[]>("list_databases");
+
       if (version === connectionVersionRef.current) {
         setDatabases(dbs);
+
+        // 1. Create an array of Promises for all collection lists
+        const collectionPromises = dbs.map(async (dbname) => {
+          const collections = await invoke<string[]>("list_collections", {
+            dbName: dbname,
+          });
+          return { dbname, collections };
+        });
+
+        // 2. Resolve all promises in parallel
+        const results = await Promise.all(collectionPromises);
+
+        // 3. Convert the results array back into your Record object
+        const collectionsmap = results.reduce(
+          (acc, { dbname, collections }) => {
+            acc[dbname] = collections;
+            return acc;
+          },
+          {} as Record<string, string[]>,
+        );
+
+        if (version === connectionVersionRef.current) {
+          setDatabaseCollections(collectionsmap);
+          console.log("Collections Map Resolved:", collectionsmap);
+        }
       }
     } catch (error) {
       if (version === connectionVersionRef.current) {
-        console.error("Failed to fetch databases:", error);
+        console.error("Failed to fetch databases/collections:", error);
       }
     } finally {
       if (version === connectionVersionRef.current) {
@@ -89,6 +119,7 @@ function RootComponent() {
       setDbLoading(false);
       setDbError(null);
       setDatabases([]);
+      setDatabaseCollections({});
     }
 
     return () => {

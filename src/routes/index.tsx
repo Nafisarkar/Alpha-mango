@@ -10,11 +10,23 @@ import { Spinner } from "@/components/ui/spinner";
 import { AlertCircle, Database } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
+type SearchParams = {
+  database?: string;
+  collection?: string;
+};
+
 export const Route = createFileRoute("/")({
+  validateSearch: (search: Record<string, unknown>): SearchParams => {
+    return {
+      database: search.database as string | undefined,
+      collection: search.collection as string | undefined,
+    };
+  },
   component: RouteComponent,
 });
 
 function RouteComponent() {
+  const { database, collection } = Route.useSearch();
   const dbconnectionstatus = useAtomValue(dbConnectionStatusAtom);
   const dbLoading = useAtomValue(dbLoadingAtom);
   const dbError = useAtomValue(dbErrorAtom);
@@ -45,18 +57,34 @@ function RouteComponent() {
             </Alert>
           </div>
         ) : dbconnectionstatus ? (
-          <div className="flex-1 flex flex-col items-center justify-center text-center space-y-4">
-            <div className="p-4 rounded-full bg-primary/10">
-              <Database className="w-10 h-10 text-primary" />
+          database && collection ? (
+            <div className="flex-1 flex flex-col pt-4">
+              <div className="flex items-center gap-2 mb-4 ml-6">
+                <Database className="size-4 text-muted-foreground" />
+                <span className="text-sm font-medium">{database} </span>
+                <span className="text-muted-foreground">/</span>
+                <span className="text-sm font-bold">{collection}</span>
+              </div>
+              <div className="flex-1 border-t bg-card flex items-center justify-center">
+                <p className="text-muted-foreground text-sm italic">
+                  Data explorer for {collection} coming soon...
+                </p>
+              </div>
             </div>
-            <div>
-              <h2 className="text-xl font-semibold">Connected to Cluster</h2>
-              <p className="text-sm text-muted-foreground max-w-xs mx-auto">
-                Successfully connected to the MongoDB instance. Select a
-                collection from the sidebar to start exploring.
-              </p>
+          ) : (
+            <div className="flex-1 flex flex-col items-center justify-center text-center space-y-4">
+              <div className="p-4 rounded-full bg-primary/10">
+                <Database className="w-10 h-10 text-primary" />
+              </div>
+              <div>
+                <h2 className="text-xl font-semibold">Connected to Cluster</h2>
+                <p className="text-sm text-muted-foreground max-w-xs mx-auto">
+                  Successfully connected to the MongoDB instance. Select a
+                  collection from the sidebar to start exploring.
+                </p>
+              </div>
             </div>
-          </div>
+          )
         ) : (
           <div className="flex-1 flex flex-col items-center justify-center text-center space-y-4">
             <div className="p-4 rounded-full bg-muted">

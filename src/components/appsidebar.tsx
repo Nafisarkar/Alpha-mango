@@ -10,14 +10,15 @@ import {
   SidebarGroupContent,
 } from "@/components/ui/sidebar";
 import { Link } from "@tanstack/react-router";
-import { Server, Database } from "lucide-react";
+import { Server } from "lucide-react";
 import { useAtomValue } from "jotai";
 import { databasesAtom, dbLoadingAtom } from "@/store/settings.store";
 import { Spinner } from "./ui/spinner";
+import { DatabaseItem } from "./databaseitem";
 
 function AppSidebar() {
   const databases = useAtomValue(databasesAtom);
-  const isLoading = useAtomValue(dbLoadingAtom);
+  const isGlobalLoading = useAtomValue(dbLoadingAtom);
 
   return (
     <Sidebar variant="sidebar" className="border-r h-full">
@@ -34,8 +35,13 @@ function AppSidebar() {
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg hover:bg-transparent">
                   <Server className="size-4 text-muted-foreground " />
                 </div>
-                <div className="flex flex-col gap-0.5 leading-none overflow-hidden">
-                  <span className=" truncate">Cluster</span>
+                <div className="flex flex-col gap-0.5 leading-none overflow-hidden text-left">
+                  <span className="truncate font-semibold text-sm">
+                    Cluster
+                  </span>
+                  <span className="truncate text-[10px] text-muted-foreground">
+                    MongoDB Connection
+                  </span>
                 </div>
               </Link>
             </SidebarMenuButton>
@@ -45,22 +51,19 @@ function AppSidebar() {
 
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel className="flex items-center justify-between">
-            <span>Databases</span>
-            {isLoading && <Spinner className="size-3" />}
+          <SidebarGroupLabel className="flex items-center justify-between px-2 h-8">
+            <span className="text-[10px] uppercase tracking-wider font-bold">
+              Databases
+            </span>
+            {isGlobalLoading && <Spinner className="size-3" />}
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {databases.map((db) => (
-                <SidebarMenuItem key={db}>
-                  <SidebarMenuButton size="sm">
-                    <Database className="size-4 text-muted-foreground" />
-                    <span>{db}</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
+                <DatabaseItem key={db} dbName={db} />
               ))}
-              {!isLoading && databases.length === 0 && (
-                <div className="px-4 py-2 text-xs text-muted-foreground italic">
+              {!isGlobalLoading && databases.length === 0 && (
+                <div className="px-4 py-3 text-xs text-muted-foreground italic text-center">
                   No databases found
                 </div>
               )}

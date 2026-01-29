@@ -9,3 +9,4 @@ export const dbConnectionStringAtom = atomWithStorage<string | null>(
 export const dbLoadingAtom = atom<boolean>(false);
 export const dbErrorAtom = atom<string | null>(null);
 export const databasesAtom = atom<string[]>([]);
+export const databaseCollectionsAtom = atom<Record<string, string[]>>({});
