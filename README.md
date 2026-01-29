@@ -1,5 +1,5 @@
 
-  <h1>Alpha Mango</h1>
+  <h1>Alpha Mango - Under Development</h1>
   <p><strong>A sleek, high-performance MongoDB management desktop application.</strong></p>
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -36,7 +36,7 @@
 | **Backend**   | [Rust](https://www.rust-lang.org/)                                          |
 | **Framework** | [Tauri](https://tauri.app/)                                                 |
 | **Frontend**  | [React](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/) |
-| **Styling**   | [Sass/CSS](https://sass-lang.com/)                                          |
+| **Styling**   | [Tailwind](https://tailwindcss.com/)                                        |
 | **Tooling**   | [Vite](https://vitejs.dev/)                                                 |
 
 ## 🚀 Getting Started
@@ -66,7 +66,7 @@ Ensure you have the following installed:
 
 3. **Launch in Dev Mode**
    ```bash
-   bun tauri dev
+   bun run tauri dev
    ```
 
 ### Building for Production
@@ -76,13 +76,3 @@ To generate a production-ready installer:
 ```bash
 bun tauri build
 ```
-
-## 📸 Screenshots
-
-_(Add your app screenshots here to showcase the sleek UI)_
-
-## 📜 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
