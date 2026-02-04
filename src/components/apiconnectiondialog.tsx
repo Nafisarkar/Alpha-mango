@@ -43,7 +43,9 @@ function ApiConnectionDialog() {
       <DialogTrigger asChild>
         <Button
           variant="outline"
-          className={dbconnectionstatus ? "text-green-400" : "text-destructive"}
+          className={
+            dbconnectionstatus ? "text-green-700 " : "text-destructive"
+          }
           size="icon-sm"
         >
           <Plug className="size-4" />

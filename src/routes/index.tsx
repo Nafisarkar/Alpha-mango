@@ -1,14 +1,17 @@
 import Topbar from "@/components/topbar";
 import {
+  dataFromTheCollectionAtom,
   dbConnectionStatusAtom,
   dbErrorAtom,
   dbLoadingAtom,
 } from "@/store/settings.store";
 import { createFileRoute } from "@tanstack/react-router";
-import { useAtomValue } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import { Spinner } from "@/components/ui/spinner";
 import { AlertCircle, ArrowRight, Database } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { useEffect } from "react";
+import { invoke } from "@tauri-apps/api/core";
 
 type SearchParams = {
   database?: string;
@@ -30,6 +33,41 @@ function RouteComponent() {
   const dbconnectionstatus = useAtomValue(dbConnectionStatusAtom);
   const dbLoading = useAtomValue(dbLoadingAtom);
   const dbError = useAtomValue(dbErrorAtom);
+  const [dataFromTheCollection, setDataFromTheCollection] = useAtom(
+    dataFromTheCollectionAtom,
+  );
+
+  useEffect(() => {
+    // Fetch data for the selected collection
+    const getCollectionData = async (
+      databaseName: string,
+      collectionName: string,
+    ) => {
+      try {
+        const result = await invoke<{}>("get_collection_data", {
+          dbName: database,
+          collectionName: collection,
+        });
+        setDataFromTheCollection(result);
+        console.log(
+          `Data fetched for ${databaseName}.${collectionName}:`,
+          result,
+        );
+      } catch (error) {
+        console.error(
+          `Failed to fetch data for ${databaseName}.${collectionName}:`,
+          error,
+        );
+        setDataFromTheCollection({});
+      }
+    };
+
+    if (database && collection) {
+      getCollectionData(database, collection);
+
+      console.log(`Fetching data for ${database}.${collection}`);
+    }
+  }, [database, collection]);
 
   return (
     <div className="flex flex-col h-full bg-background">
