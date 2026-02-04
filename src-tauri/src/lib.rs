@@ -1,6 +1,13 @@
 use mongodb::{options::ClientOptions, Client};
+use serde::Serialize;
 use tauri::State;
 use tokio::sync::Mutex;
+
+#[derive(Serialize)]
+pub struct ClientInfo {
+    hosts: Vec<String>,
+    app_name: Option<String>,
+}
 
 struct DbState {
     client: Mutex<Option<Client>>,
@@ -10,17 +17,23 @@ struct DbState {
 async fn connect_to_db(
     connection_string: String,
     state: State<'_, DbState>,
-) -> Result<String, String> {
+) -> Result<ClientInfo, String> {
     let client_options = ClientOptions::parse(&connection_string)
         .await
         .map_err(|e| e.to_string())?;
+
+    let info = ClientInfo {
+        hosts: client_options.hosts.iter().map(|h| h.to_string()).collect(),
+        app_name: client_options.app_name.clone(),
+    };
+
     let client = Client::with_options(client_options).map_err(|e| e.to_string())?;
 
     let mut client_guard = state.client.lock().await;
     *client_guard = Some(client);
 
-    println!("Database connected");
-    Ok("Connected successfully".into())
+    println!("Database connected to: {:?}", info.hosts);
+    Ok(info)
 }
 
 #[tauri::command]

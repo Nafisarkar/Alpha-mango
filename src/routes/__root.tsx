@@ -4,6 +4,7 @@ import AppSidebar from "@/components/appsidebar";
 import StatusBar from "@/components/statusbar";
 import { useAtomValue, useSetAtom } from "jotai";
 import {
+  clusterInfoAtom,
   databaseCollectionsAtom,
   databasesAtom,
   dbConnectionStatusAtom,
@@ -24,6 +25,7 @@ function RootComponent() {
   const setDbError = useSetAtom(dbErrorAtom);
   const setDatabases = useSetAtom(databasesAtom);
   const setDatabaseCollections = useSetAtom(databaseCollectionsAtom);
+  const setClusterInfo = useSetAtom(clusterInfoAtom);
   const connectionVersionRef = useRef(0);
 
   async function handleConnect(connStr: string) {
@@ -33,6 +35,7 @@ function RootComponent() {
       setDbError(null);
       setDatabases([]);
       setDatabaseCollections({});
+      setClusterInfo({ hosts: [], app_name: "" });
       return;
     }
 
@@ -48,6 +51,10 @@ function RootComponent() {
       // Avoid updating state if a newer connection attempt has started
       if (currentVersion === connectionVersionRef.current) {
         console.log("Connected to database:", message);
+        setClusterInfo({
+          hosts: message.hosts,
+          app_name: message.app_name,
+        });
         setDbConnectionStatus(true);
         await fetchDatabases(currentVersion);
       }

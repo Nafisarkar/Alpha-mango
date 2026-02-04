@@ -12,13 +12,20 @@ import {
 import { Link } from "@tanstack/react-router";
 import { Server } from "lucide-react";
 import { useAtomValue } from "jotai";
-import { databasesAtom, dbLoadingAtom } from "@/store/settings.store";
+import {
+  clusterInfoAtom,
+  databasesAtom,
+  dbConnectionStatusAtom,
+  dbLoadingAtom,
+} from "@/store/settings.store";
 import { Spinner } from "./ui/spinner";
 import { DatabaseItem } from "./databaseitem";
 
 function AppSidebar() {
   const databases = useAtomValue(databasesAtom);
   const isGlobalLoading = useAtomValue(dbLoadingAtom);
+  const clusterInfo = useAtomValue(clusterInfoAtom);
+  const dbConnectionStatus = useAtomValue(dbConnectionStatusAtom);
 
   return (
     <Sidebar variant="sidebar" className="border-r h-full">
@@ -37,10 +44,18 @@ function AppSidebar() {
                 </div>
                 <div className="flex flex-col gap-0.5 leading-none overflow-hidden text-left">
                   <span className="truncate font-semibold text-sm">
-                    Cluster
+                    {dbConnectionStatus
+                      ? clusterInfo
+                        ? clusterInfo.app_name || "MongoDB Cluster"
+                        : "MongoDB Cluster"
+                      : "Not Connected"}
                   </span>
                   <span className="truncate text-[10px] text-muted-foreground">
-                    MongoDB Connection
+                    {dbConnectionStatus
+                      ? clusterInfo
+                        ? clusterInfo.hosts[0].split(".")[0]
+                        : "Unknown Host"
+                      : "Disconnected"}
                   </span>
                 </div>
               </Link>

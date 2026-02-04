@@ -10,11 +10,12 @@ import {
 import {
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuAction,
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "./ui/sidebar";
-import { ChevronRight, Database } from "lucide-react";
+import { ChevronRight, Plus } from "lucide-react";
 import { Spinner } from "./ui/spinner";
 import { Link } from "@tanstack/react-router";
 
@@ -44,29 +45,26 @@ export function DatabaseItem({ dbName }: { dbName: string }) {
       <SidebarMenuItem>
         <CollapsibleTrigger asChild>
           <SidebarMenuButton tooltip={dbName}>
-            <Database className="size-4 text-muted-foreground" />
-            <span className="flex-1 truncate font-medium">{dbName}</span>
             {isLoading ? (
               <Spinner className="size-3 animate-spin" />
             ) : (
               <ChevronRight className="size-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
             )}
+            <span className="flex-1 truncate font-medium">{dbName}</span>
           </SidebarMenuButton>
         </CollapsibleTrigger>
-        <CollapsibleContent className="flex flex-row itemsitems-start justify-center">
-          <SidebarMenuSub className="w-full">
+        <SidebarMenuAction showOnHover>
+          <Plus />
+          <span className="sr-only">Add Collection</span>
+        </SidebarMenuAction>
+        <CollapsibleContent>
+          <SidebarMenuSub>
             {dbCollections.length > 0 ? (
               dbCollections.map((collection) => (
                 <SidebarMenuSubItem key={`${dbName}-${collection}`}>
                   <SidebarMenuSubButton asChild>
-                    <Link
-                      to="/"
-                      search={{ database: dbName, collection }}
-                      className="flex items-center gap-2 w-full justify-center"
-                    >
-                      <span className="w-full items-center justify-center">
-                        {collection}
-                      </span>
+                    <Link to="/" search={{ database: dbName, collection }}>
+                      <span>{collection}</span>
                     </Link>
                   </SidebarMenuSubButton>
                 </SidebarMenuSubItem>
