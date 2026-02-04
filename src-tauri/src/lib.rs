@@ -2,6 +2,7 @@ use mongodb::{options::ClientOptions, Client};
 use serde::Serialize;
 use tauri::State;
 use tokio::sync::Mutex;
+use futures::stream::StreamExt;
 
 #[derive(Serialize)]
 pub struct ClientInfo {
@@ -66,6 +67,42 @@ async fn list_collections(
     Ok(collection_names)
 }
 
+//get the data from a collection and return as json
+#[tauri::command]
+async fn get_collection_data(
+    db_name: String,
+    collection_name: String,
+    state: State<'_, DbState>,
+) -> Result<serde_json::Value, String> {
+    let client_guard = state.client.lock().await;
+    let client = client_guard.as_ref().ok_or("Not connected")?;
+
+    let db = client.database(&db_name);
+    let collection = db.collection::<mongodb::bson::Document>(&collection_name);
+
+    // Add a default limit of 50 documents to keep it responsive
+    let find_options = mongodb::options::FindOptions::builder()
+        .limit(50)
+        .build();
+
+    let mut cursor = collection
+        .find(None, find_options)
+        .await
+        .map_err(|e| e.to_string())?;
+
+    let mut results = Vec::new();
+    while let Some(doc) = cursor.next().await {
+        let doc = doc.map_err(|e| e.to_string())?;
+        // Convert BSON document to JSON Value
+        let json_value = serde_json::to_value(doc).map_err(|e| e.to_string())?;
+        results.push(json_value);
+    }
+
+    Ok(serde_json::Value::Array(results))
+}
+
+
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -76,7 +113,8 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             connect_to_db,
             list_databases,
-            list_collections
+            list_collections,
+            get_collection_data
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

@@ -14,3 +14,4 @@ export const clusterInfoAtom = atom<{
   app_name: string;
 }>();
 export const databaseCollectionsAtom = atom<Record<string, string[]>>({});
+export const dataFromTheCollectionAtom = atom<{}>({});

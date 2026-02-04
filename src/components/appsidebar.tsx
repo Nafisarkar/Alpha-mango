@@ -66,12 +66,6 @@ function AppSidebar() {
 
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel className="flex items-center justify-between px-2 h-8">
-            <span className="text-[10px] uppercase tracking-wider font-bold">
-              Databases
-            </span>
-            {isGlobalLoading && <Spinner className="size-3" />}
-          </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {databases.map((db) => (

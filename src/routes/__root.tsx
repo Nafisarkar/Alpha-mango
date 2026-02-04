@@ -7,6 +7,7 @@ import {
   clusterInfoAtom,
   databaseCollectionsAtom,
   databasesAtom,
+  dataFromTheCollectionAtom,
   dbConnectionStatusAtom,
   dbConnectionStringAtom,
   dbErrorAtom,
@@ -26,6 +27,7 @@ function RootComponent() {
   const setDatabases = useSetAtom(databasesAtom);
   const setDatabaseCollections = useSetAtom(databaseCollectionsAtom);
   const setClusterInfo = useSetAtom(clusterInfoAtom);
+  const getDataFromTheCollection = useSetAtom(dataFromTheCollectionAtom);
   const connectionVersionRef = useRef(0);
 
   async function handleConnect(connStr: string) {
@@ -36,6 +38,7 @@ function RootComponent() {
       setDatabases([]);
       setDatabaseCollections({});
       setClusterInfo({ hosts: [], app_name: "" });
+      getDataFromTheCollection({});
       return;
     }
 
@@ -44,7 +47,10 @@ function RootComponent() {
     try {
       setDbLoading(true);
       setDbError(null);
-      const message = await invoke("connect_to_db", {
+      const message: {
+       hosts: string[];
+       app_name: string;
+      } = await invoke("connect_to_db", {
         connectionString: connStr,
       });
 

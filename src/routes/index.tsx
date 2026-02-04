@@ -7,7 +7,7 @@ import {
 import { createFileRoute } from "@tanstack/react-router";
 import { useAtomValue } from "jotai";
 import { Spinner } from "@/components/ui/spinner";
-import { AlertCircle, Database } from "lucide-react";
+import { AlertCircle, ArrowRight, Database } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 type SearchParams = {
@@ -58,12 +58,13 @@ function RouteComponent() {
           </div>
         ) : dbconnectionstatus ? (
           database && collection ? (
-            <div className="flex-1 flex flex-col pt-4">
-              <div className="flex items-center gap-2 mb-4 ml-6">
-                <Database className="size-4 text-muted-foreground" />
-                <span className="text-sm font-medium">{database} </span>
-                <span className="text-muted-foreground">/</span>
-                <span className="text-sm font-bold">{collection}</span>
+            <div className="flex-1 flex flex-col pt-2">
+              <div className="flex items-center gap-2 mb-2 ml-5">
+                <span className="text-xs opacity-70">{database} </span>
+                <span className="text-muted-foreground">
+                  <ArrowRight size={12} />
+                </span>
+                <span className="text-xs opacity-70">{collection}</span>
               </div>
               <div className="flex-1 border-t bg-card flex items-center justify-center">
                 <p className="text-muted-foreground text-sm italic">
@@ -74,11 +75,10 @@ function RouteComponent() {
           ) : (
             <div className="flex-1 flex flex-col items-center justify-center text-center space-y-4">
               <div className="p-4 rounded-full bg-primary/10">
-                <Database className="w-10 h-10 text-primary" />
+                <Database className="w-8 h-8 text-primary" />
               </div>
               <div>
-                <h2 className="text-xl font-semibold">Connected to Cluster</h2>
-                <p className="text-sm text-muted-foreground max-w-xs mx-auto">
+                <p className="text-xs text-muted-foreground max-w-xs mx-auto">
                   Successfully connected to the MongoDB instance. Select a
                   collection from the sidebar to start exploring.
                 </p>

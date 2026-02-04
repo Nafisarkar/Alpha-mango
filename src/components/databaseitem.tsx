@@ -50,7 +50,7 @@ export function DatabaseItem({ dbName }: { dbName: string }) {
             ) : (
               <ChevronRight className="size-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
             )}
-            <span className="flex-1 truncate font-medium">{dbName}</span>
+            <span className="flex-1 truncate text-xs">{dbName}</span>
           </SidebarMenuButton>
         </CollapsibleTrigger>
         <SidebarMenuAction showOnHover>
@@ -64,7 +64,7 @@ export function DatabaseItem({ dbName }: { dbName: string }) {
                 <SidebarMenuSubItem key={`${dbName}-${collection}`}>
                   <SidebarMenuSubButton asChild>
                     <Link to="/" search={{ database: dbName, collection }}>
-                      <span>{collection}</span>
+                      <span className="text-xs">{collection}</span>
                     </Link>
                   </SidebarMenuSubButton>
                 </SidebarMenuSubItem>
