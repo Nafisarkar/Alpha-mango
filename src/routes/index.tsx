@@ -8,7 +8,7 @@ import {
 import { createFileRoute } from "@tanstack/react-router";
 import { useAtom, useAtomValue } from "jotai";
 import { Spinner } from "@/components/ui/spinner";
-import { AlertCircle, ArrowRight, Database } from "lucide-react";
+import { AlertCircle, ArrowRight, Database, Slash } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
@@ -71,7 +71,19 @@ function RouteComponent() {
 
   return (
     <div className="flex flex-col h-full bg-background">
-      <Topbar />
+      <Topbar>
+        {dbconnectionstatus && database && collection && (
+          <div className="flex items-center gap-2 text-sm ml-2">
+            <span className="font-medium text-muted-foreground/80">
+              {database}
+            </span>
+            <span className="text-muted-foreground/30">
+              <Slash size={16} className="-rotate-12" />
+            </span>
+            <span className="font-medium text-foreground">{collection}</span>
+          </div>
+        )}
+      </Topbar>
 
       <div className="flex-1 flex flex-col">
         {dbLoading ? (
@@ -96,15 +108,8 @@ function RouteComponent() {
           </div>
         ) : dbconnectionstatus ? (
           database && collection ? (
-            <div className="flex-1 flex flex-col pt-2">
-              <div className="flex items-center gap-2 mb-2 ml-5">
-                <span className="text-xs opacity-70">{database} </span>
-                <span className="text-muted-foreground">
-                  <ArrowRight size={12} />
-                </span>
-                <span className="text-xs opacity-70">{collection}</span>
-              </div>
-              <div className="flex-1 border-t bg-card flex items-center justify-center">
+            <div className="flex-1 flex flex-col">
+              <div className="flex-1 bg-card flex items-center justify-center">
                 <p className="text-muted-foreground text-sm italic">
                   Data explorer for {collection} coming soon...
                 </p>

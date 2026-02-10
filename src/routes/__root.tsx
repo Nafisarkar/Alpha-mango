@@ -3,6 +3,7 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import AppSidebar from "@/components/appsidebar";
 import StatusBar from "@/components/statusbar";
 import { useAtomValue, useSetAtom } from "jotai";
+import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import {
   clusterInfoAtom,
   databaseCollectionsAtom,
@@ -48,8 +49,8 @@ function RootComponent() {
       setDbLoading(true);
       setDbError(null);
       const message: {
-       hosts: string[];
-       app_name: string;
+        hosts: string[];
+        app_name: string;
       } = await invoke("connect_to_db", {
         connectionString: connStr,
       });
@@ -149,6 +150,7 @@ function RootComponent() {
           <SidebarInset className="flex flex-1 flex-col overflow-hidden">
             <div className="flex-1 overflow-hidden">
               <Outlet />
+              <TanStackRouterDevtools position="bottom-right" />
             </div>
           </SidebarInset>
         </div>

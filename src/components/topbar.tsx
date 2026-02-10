@@ -3,54 +3,45 @@ import { Button } from "./ui/button";
 import { ButtonGroup } from "./ui/button-group";
 import { useSidebar } from "./ui/sidebar";
 import ApiConnectionDialog from "./apiconnectiondialog";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "./ui/select";
-import TerminalDrawer from "./terminaldrawer";
 import { useAtom } from "jotai";
 import { dbLoadingAtom } from "@/store/settings.store";
+import { useLocation } from "@tanstack/react-router";
 
-function Topbar() {
+function Topbar({ children }: { children?: React.ReactNode }) {
   const { toggleSidebar } = useSidebar();
+  const location = useLocation();
+
   const [dbLoading] = useAtom(dbLoadingAtom);
   return (
-    <div className="h-12 w-full px-4 flex flex-row items-center justify-between border-b">
-      <div className="flex flex-row gap-4 items-center">
-        <Button variant="outline" size="icon-sm" onClick={toggleSidebar}>
-          <Menu />
+    <div className="h-12 w-full px-4 flex flex-row items-center justify-between border-b gap-4">
+      <div className="flex flex-row gap-4 items-center shrink-0">
+        <Button variant="ghost" size="icon-sm" onClick={toggleSidebar}>
+          <Menu className="size-4" />
         </Button>
-        <TerminalDrawer />
-        <ButtonGroup>
-          <Button variant="outline" size="icon-sm">
-            <ArrowLeft />
-          </Button>
-          <Button variant="outline" size="icon-sm">
-            <ArrowRight />
-          </Button>
-        </ButtonGroup>
+
+        {location.pathname !== "/settings" && (
+          <ButtonGroup>
+            <Button variant="outline" size="icon-sm">
+              <ArrowLeft className="size-4" />
+            </Button>
+            <Button variant="outline" size="icon-sm">
+              <ArrowRight className="size-4" />
+            </Button>
+          </ButtonGroup>
+        )}
       </div>
-      <div className="flex flex-row items-center gap-4">
-        <Select defaultValue="25">
-          <SelectTrigger size="sm" className="h-10">
-            <SelectValue placeholder="25" className="h-10" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectItem value="25">25</SelectItem>
-              <SelectItem value="50">50</SelectItem>
-              <SelectItem value="100">100</SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
+
+      <div className="flex-1 flex items-center min-w-0 overflow-hidden">
+        {children}
+      </div>
+
+      <div className="flex flex-row items-center gap-4 shrink-0">
         <ButtonGroup>
           <ApiConnectionDialog />
           <Button variant="outline" size="icon-sm">
-            <RefreshCcw className={dbLoading ? "animate-spin" : ""} />
+            <RefreshCcw
+              className={`size-3.5 ${dbLoading ? "animate-spin" : ""}`}
+            />
           </Button>
         </ButtonGroup>
       </div>

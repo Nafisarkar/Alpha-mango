@@ -1,16 +1,16 @@
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarGroup,
-  SidebarGroupLabel,
   SidebarGroupContent,
 } from "@/components/ui/sidebar";
 import { Link } from "@tanstack/react-router";
-import { Server } from "lucide-react";
+import { Server, Settings } from "lucide-react";
 import { useAtomValue } from "jotai";
 import {
   clusterInfoAtom,
@@ -18,7 +18,6 @@ import {
   dbConnectionStatusAtom,
   dbLoadingAtom,
 } from "@/store/settings.store";
-import { Spinner } from "./ui/spinner";
 import { DatabaseItem } from "./databaseitem";
 
 function AppSidebar() {
@@ -36,26 +35,21 @@ function AppSidebar() {
               size="sm"
               asChild
               className="h-12 rounded-none w-full"
-              variant={"outline"}
+              variant={"ghost"}
             >
               <Link to="/">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg hover:bg-transparent">
-                  <Server className="size-4 text-muted-foreground " />
+                <div className="relative flex aspect-square size-8 items-center justify-center rounded-none hover:bg-transparent">
+                  <Server className="size-4 text-muted-foreground" />
+                  {dbConnectionStatus && (
+                    <div className="absolute right-1.5 bottom-1.5 size-2 rounded-full bg-green-500 ring-2 ring-sidebar" />
+                  )}
                 </div>
                 <div className="flex flex-col gap-0.5 leading-none overflow-hidden text-left">
                   <span className="truncate font-semibold text-sm">
                     {dbConnectionStatus
-                      ? clusterInfo
-                        ? clusterInfo.app_name || "MongoDB Cluster"
-                        : "MongoDB Cluster"
+                      ? clusterInfo?.hosts?.[0]?.split(":")[0] ||
+                        "MongoDB Cluster"
                       : "Not Connected"}
-                  </span>
-                  <span className="truncate text-[10px] text-muted-foreground">
-                    {dbConnectionStatus
-                      ? clusterInfo
-                        ? clusterInfo.hosts[0].split(".")[0]
-                        : "Unknown Host"
-                      : "Disconnected"}
                   </span>
                 </div>
               </Link>
@@ -80,6 +74,18 @@ function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarFooter className="p-0 border-t">
+        <SidebarMenu  >
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild variant="ghost" size="sm" className="border-none">
+              <Link to={"/settings"}>
+                <Settings className="size-4" />
+                <span>Settings</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
     </Sidebar>
   );
 }
